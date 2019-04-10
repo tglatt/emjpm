@@ -594,6 +594,24 @@ router.post("/", typeRequired("service"), async (req, res, next) => {
   }
 });
 
+router.post(
+  "/upload",
+  typeRequired("individuel", "prepose", "service"),
+  multer({ storage }).single("file"),
+  async (req, res) => {
+    try {
+      const mandataire = await findMandataire(req, req.body.mandataireId);
+      await updateMandataire(mandataire.id, { cv: req.file.filename });
+      res
+        .status(200)
+        .json({ success: true })
+        .end();
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 router.use("/", require("./commentaires"));
 router.use("/", require("./mandataireMesures"));
 router.use("/", require("./serviceAntennes"));

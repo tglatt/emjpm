@@ -2,9 +2,7 @@ import Router from "next/router";
 import fetch from "isomorphic-fetch";
 import getConfig from "next/config";
 
-const {
-  publicRuntimeConfig: { API_URL }
-} = getConfig();
+const { publicRuntimeConfig: { API_URL } } = getConfig();
 
 // forceLogin: redirect user to /login when receiving a 401
 const apiFetch = (route, params, options = { forceLogin: true }) => {
