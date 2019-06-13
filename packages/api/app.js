@@ -42,6 +42,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(passport.initialize());
 
+app.use(bodyParser.json({ limit: "10mb" }));
+app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
+
 app.use("/api/v1/inscription", inscriptionRoutes);
 app.use("/api/v1", passport.authenticate("jwt", { session: false }), routes);
 app.use("/auth", authRoutes);

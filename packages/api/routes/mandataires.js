@@ -5,6 +5,9 @@ const router = express.Router();
 
 const { typeRequired, loginRequired } = require("../auth/_helpers");
 
+const path = require("path");
+const multer = require("multer");
+
 const {
   getMandataireByUserId,
   updateMandataire,
@@ -591,6 +594,16 @@ router.post("/", typeRequired("service"), async (req, res, next) => {
     res.json({ success: true });
   } catch (err) {
     next(err);
+  }
+});
+
+var storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+    // store in `emjpm/uploads`
+    cb(null, path.join(__dirname, "../../../uploads"));
+  },
+  filename: function(req, file, cb) {
+    cb(null, `${file.fieldname}-${Date.now()}-${file.originalname}`);
   }
 });
 

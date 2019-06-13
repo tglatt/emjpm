@@ -10,7 +10,6 @@ import apiFetch from "../communComponents/Api";
 
 import { updateMandataire } from "./actions/mandataire";
 import Fiche from "./Fiche";
-import ImportCV from "../common/ImportCv";
 
 // pick and display selected etablissement / tis
 const Selector = ({
@@ -68,7 +67,8 @@ const ButtonEditMandataire = connect(
       style={{ marginLeft: 0 }}
       onClick={() =>
         show(formData.type === "service" ? "EditService" : "EditMandataire", {
-          formData
+          formData,
+          currentMandataire
         })
       }
     >
@@ -106,7 +106,13 @@ class MandataireProfile extends React.Component {
         <div style={{ flex: "0 0 50%" }}>
           <h3>Mes coordonnées</h3>
           <Fiche {...newMandataire} />
-          <ImportCV mandataire_id={newMandataire.id} cv={newMandataire.cv} />
+          <div>
+            Cv:{" "}
+            <a href={`${process.env.PATH_FILE_NAME}/${newMandataire.cv}`}>
+              {" "}
+              {newMandataire.cv || " "}{" "}
+            </a>
+          </div>
           <br />
           <br />
           <ButtonEditMandataire formData={newMandataire} />

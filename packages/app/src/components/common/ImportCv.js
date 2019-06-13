@@ -1,38 +1,42 @@
-import React from "react";
-
+import React, { useCallback } from "react";
+import { useDropzone } from "react-dropzone";
 import apiFetch from "../communComponents/Api";
-import styled from "styled-components";
-import { lighten } from "@wessberg/color";
 
-const Input = styled.input`
-  background: "#00000";
-  border: 1px solid;
-  height: 40px;
-  width: auto;
-  text-align: center;
-  color: black;
-  padding: 0 15px;
-  border-radius: 3px;
-  box-shadow: 2px 2px 1px #c0c0c0;
-  font-size: 1.1em;
-  margin: 5px;
-  cursor: pointer;
-  svg {
-    vertical-align: middle;
+import styled from "styled-components";
+
+const getColor = props => {
+  if (props.isDragAccept) {
+    return "#00e676";
   }
+  if (props.isDragReject) {
+    return "#ff1744";
+  }
+  if (props.isDragActive) {
+    return "#2196f3";
+  }
+  return "#eeeeee";
+};
+
+const Container = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border-width: 2px;
+  border-radius: 2px;
+  border-color: ${props => getColor(props)};
+  border-style: dashed;
+  background-color: #fafafa;
+  color: #bdbdbd;
+  outline: none;
+  transition: border 0.24s ease-in-out;
 `;
 
-class ImportCV extends React.Component {
-  onFormSubmit = e => {
-    e.preventDefault(); // Stop form submit
-    if (this.file) {
-      this.fileUpload(this.file.files[0]);
-    }
-  };
-
-  fileUpload = file => {
+function MyDropzone(props) {
+  const onDrop = useCallback(acceptedFiles => {
     const formData = new FormData();
-    formData.append("file", file);
+    formData.append("file", acceptedFiles[0]);
 
     return apiFetch(`/mandataires/upload`, {
       method: "POST",
@@ -41,22 +45,30 @@ class ImportCV extends React.Component {
       alert("Impossible de uploader le Curriculum Vitae");
       throw e;
     });
-  };
+  }, []);
 
-  render() {
-    return (
-      <>
-        <h2>CV à l'intention des juges </h2>
-        <div>
-          Votre Cv: <a href={`${process.env.PATH_FILE_NAME}/${this.props.cv}`}> {this.props.cv} </a>
-        </div>
-        <form onSubmit={this.onFormSubmit}>
-          Télécharger son Cv:
-          <Input ref={node => (this.file = node)} type="file" onChange={this.onFormSubmit} />
-        </form>
-      </>
-    );
-  }
+  const {
+    getRootProps,
+    getInputProps,
+    acceptedFiles,
+    isDragActive,
+    isDragAccept,
+    isDragReject
+  } = useDropzone({
+    onDrop,
+    accept: ".jpeg,.png,.pdf,.jpg"
+  });
+
+  const file = acceptedFiles && acceptedFiles.map(file => <li>{file.name}</li>);
+
+  return (
+    <Container {...getRootProps({ isDragActive, isDragAccept, isDragReject })}>
+      <input {...getInputProps()} />
+      <p> Déposez votre CV ici, ou cliquez ici pour télécharger votre CV</p>
+      <aside>
+        <ul>{file}</ul>
+      </aside>
+    </Container>
+  );
 }
-
-export default ImportCV;
+export default MyDropzone;
