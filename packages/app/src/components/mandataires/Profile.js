@@ -11,6 +11,13 @@ import apiFetch from "../communComponents/Api";
 import { updateMandataire } from "./actions/mandataire";
 import Fiche from "./Fiche";
 
+import getConfig from "next/config";
+import { saveAs } from "file-saver";
+
+const {
+  publicRuntimeConfig: { API_URL }
+} = getConfig();
+
 // pick and display selected etablissement / tis
 const Selector = ({
   title,
@@ -96,6 +103,11 @@ const getNewMandataire = props =>
     : props.currentMandataire && props.currentMandataire[0];
 
 class MandataireProfile extends React.Component {
+  onClick = mandataire => {
+    apiFetch(`/mandataires/${mandataire.id}/cv`, {}, { blob: true }).then(response => {
+      saveAs(response, "IMPORT CV");
+    });
+  };
   render() {
     const { etablissements, tis } = this.props;
 
@@ -108,7 +120,7 @@ class MandataireProfile extends React.Component {
           <Fiche {...newMandataire} />
           <div>
             Cv:{" "}
-            <a href={`${process.env.PATH_FILE_NAME}/${newMandataire.cv}`}>
+            <a href="#" onClick={() => this.onClick(newMandataire)}>
               {" "}
               {newMandataire.cv || " "}{" "}
             </a>
