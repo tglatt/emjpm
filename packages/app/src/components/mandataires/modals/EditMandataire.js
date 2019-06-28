@@ -8,7 +8,7 @@ import { bindActionCreators } from "redux";
 import { updateMandataire } from "../actions/mandataire";
 import Layout from "../../communComponents/ModalLayout";
 import ImportCV from "../../common/ImportCv";
-import * as React from "react";
+import React from "react";
 
 const schema = {
   title: "Modifier mes informations",
