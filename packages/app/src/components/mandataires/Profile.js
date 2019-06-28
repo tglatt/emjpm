@@ -11,12 +11,7 @@ import apiFetch from "../communComponents/Api";
 import { updateMandataire } from "./actions/mandataire";
 import Fiche from "./Fiche";
 
-import getConfig from "next/config";
 import { saveAs } from "file-saver";
-
-const {
-  publicRuntimeConfig: { API_URL }
-} = getConfig();
 
 // pick and display selected etablissement / tis
 const Selector = ({
@@ -67,7 +62,7 @@ const ButtonEditMandataire = connect(
     currentMandataire: state.mandataire.profiles
   }),
   dispatch => bindActionCreators({ show }, dispatch)
-)(({ formData, show }) => (
+)(({ formData, show, currentMandataire }) => (
   <>
     <Button
       data-cy="button-edit-profile"

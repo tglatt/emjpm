@@ -21,7 +21,8 @@ const {
   updateService,
   getAllMandatairesByUserId,
   findMandataire,
-  isMandataireInTi
+  isMandataireInTi,
+  getMandataireById
 } = require("../db/queries/mandataires");
 
 const {
@@ -638,7 +639,7 @@ router.post(
         .json({ success: true })
         .end();
     } catch (err) {
-      next(err);
+      throw createError.Unauthorized(`Not Authorized to upload your CV`);
     }
   }
 );
