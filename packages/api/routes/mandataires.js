@@ -615,7 +615,7 @@ router.post(
   multer({
     storage,
     fileFilter: function(req, file, cb) {
-      const filetypes = /jpeg|jpg|png|pdf|jpg/;
+      const filetypes = /jpeg|jpg|png|pdf|jpg|doc|docx|rtf/;
       const mimetype = filetypes.test(file.mimetype);
       const extname = filetypes.test(
         path.extname(file.originalname).toLowerCase()
@@ -625,7 +625,7 @@ router.post(
         return cb(null, true);
       }
       cb(
-        "Error: File upload only supports the following filetypes - " +
+        "Erreur: Vous ne pouvez télécharger que des fichiers du type:" +
           filetypes
       );
     }
@@ -636,7 +636,7 @@ router.post(
       await updateMandataire(mandataire.id, { cv: req.file.filename });
       res
         .status(200)
-        .json({ success: true })
+        .json({ success: true, ext: req.file.mimetype.split("/").pop() })
         .end();
     } catch (err) {
       throw createError.Unauthorized(`Not Authorized to upload your CV`);

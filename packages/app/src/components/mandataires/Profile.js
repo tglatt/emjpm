@@ -11,7 +11,7 @@ import apiFetch from "../communComponents/Api";
 import { updateMandataire } from "./actions/mandataire";
 import Fiche from "./Fiche";
 
-import { saveAs } from "file-saver";
+import exportCV from "../common/exportCv";
 
 // pick and display selected etablissement / tis
 const Selector = ({
@@ -99,9 +99,7 @@ const getNewMandataire = props =>
 
 class MandataireProfile extends React.Component {
   onClick = mandataire => {
-    apiFetch(`/mandataires/${mandataire.id}/cv`, {}, { blob: true }).then(response => {
-      saveAs(response, "IMPORT CV");
-    });
+    exportCV(mandataire);
   };
   render() {
     const { etablissements, tis } = this.props;
@@ -117,7 +115,7 @@ class MandataireProfile extends React.Component {
             Cv:{" "}
             <a href="#" onClick={() => this.onClick(newMandataire)}>
               {" "}
-              {newMandataire.cv || " "}{" "}
+              {newMandataire.cv || "Non renseigné"}{" "}
             </a>
           </div>
           <br />

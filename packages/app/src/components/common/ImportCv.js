@@ -42,7 +42,7 @@ function Dropzone() {
       method: "POST",
       body: formData
     }).catch(e => {
-      alert("Impossible de uploader le Curriculum Vitae");
+      alert("Impossible d'envoyer le Curriculum Vitae");
       throw e;
     });
   }, []);
@@ -56,7 +56,7 @@ function Dropzone() {
     isDragReject
   } = useDropzone({
     onDrop,
-    accept: ".jpeg,.png,.pdf,.jpg"
+    accept: ".jpeg,.png,.pdf,.jpg,.doc,.docx,.rtf"
   });
 
   const file = acceptedFiles && acceptedFiles.map(file => <li key={file.name}>{file.name}</li>);

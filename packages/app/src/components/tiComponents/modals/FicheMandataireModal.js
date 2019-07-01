@@ -15,7 +15,7 @@ import Layout from "../../communComponents/ModalLayout";
 
 import apiFetch from "../../communComponents/Api";
 import FicheMandataire from "../../mandataires/Fiche";
-import { saveAs } from "file-saver";
+import exportCV from "../../common/exportCv";
 
 const TitleMandataire = styled.div`
   text-align: left;
@@ -120,9 +120,7 @@ const CommentairesView = ({ onSubmit, commentaires, onDelete }) => (
 
 class FicheMandataireModal extends React.Component {
   onClick = mandataire => {
-    apiFetch(`/mandataires/${mandataire.id}/cv`, {}, { blob: true }).then(response => {
-      saveAs(response, `${mandataire.nom} ${mandataire.prenom}`);
-    });
+    exportCV(mandataire);
   };
 
   render() {
