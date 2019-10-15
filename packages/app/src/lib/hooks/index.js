@@ -1,4 +1,5 @@
 import { useOnClickOutside } from "./useOnClickOutside";
 import { useDebounce } from "./useDebounce";
+import { useWindowSize } from "./useWindowSize";
 
-export { useOnClickOutside, useDebounce };
+export { useOnClickOutside, useDebounce, useWindowSize };

@@ -6,7 +6,6 @@ import React, { Fragment } from "react";
 import { Box } from "rebass";
 import { logout } from "../../util/auth";
 import { Link } from "../Commons";
-import { Footer } from "../Footer";
 import { Navigation } from "../Navigation";
 import { dropDownLinks } from "./dropDownLink";
 import { UserInformations } from "../UserInformations";
@@ -30,7 +29,7 @@ const navigationLinks = [
   }
 ];
 
-const LayoutMagistrat = props => {
+const LayoutMagistratMap = props => {
   const { children } = props;
   return (
     <Fragment>
@@ -67,13 +66,8 @@ const LayoutMagistrat = props => {
         </BoxWrapper>
       </Box>
       {children}
-      <Box bg="cardPrimary">
-        <BoxWrapper px="1">
-          <Footer />
-        </BoxWrapper>
-      </Box>
     </Fragment>
   );
 };
 
-export { LayoutMagistrat };
+export { LayoutMagistratMap };
