@@ -1,18 +1,16 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import ReactMapboxGl from "react-mapbox-gl";
 
 import LayerServices from "./LayerServices";
 import LayerIndividuel from "./LayerIndividuel";
 import LayerPrepose from "./LayerPrepose";
 import LayerMesures from "./LayerMesures";
-
+import { MapContext } from "./context";
 const Map = ReactMapboxGl({ accessToken: "" });
 
 const MagistratMandatairesMap = props => {
   const { view_mesure_gestionnaire } = props;
-  const [center, setCenter] = useState([2.3488, 48.8534]);
-  const [mesures, setMesures] = useState([]);
-  const [currentGestionnaire, setcurrentGestionnaire] = useState(false);
+  const { mesures, center } = useContext(MapContext);
 
   const services = view_mesure_gestionnaire.filter(
     gestionnaire => gestionnaire.discriminator === "SERVICE"
@@ -34,23 +32,9 @@ const MagistratMandatairesMap = props => {
       }}
     >
       <LayerMesures mesures={mesures} />
-      <LayerIndividuel
-        currentGestionnaire={currentGestionnaire}
-        setCenter={setCenter}
-        individuel={individuel}
-      />
-      <LayerPrepose
-        currentGestionnaire={currentGestionnaire}
-        setCenter={setCenter}
-        prepose={prepose}
-      />
-      <LayerServices
-        currentGestionnaire={currentGestionnaire}
-        setcurrentGestionnaire={setcurrentGestionnaire}
-        setCenter={setCenter}
-        setMesures={setMesures}
-        services={services}
-      />
+      <LayerIndividuel individuel={individuel} />
+      <LayerPrepose prepose={prepose} />
+      <LayerServices services={services} />
     </Map>
   );
 };

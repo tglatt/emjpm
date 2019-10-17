@@ -41,7 +41,11 @@ const MagistratMapMandataireList = props => {
     <Box pt="2" px="2" sx={MagistratMapMandataireListStyle} {...props}>
       <Scrollbar style={{ width: "100%", height: "100%" }}>
         <Box mr="1">
-          <Mandatairelist isMagistratMap mandataires={list} />
+          <Mandatairelist
+            isMagistratMap
+            selectCurrentMandataire={data => console.log(data)}
+            mandataires={list}
+          />
           {count > RESULT_PER_PAGE && count > currentPage - RESULT_PER_PAGE && (
             <Flex mt="5" mb="5" alignItem="center">
               <Button
