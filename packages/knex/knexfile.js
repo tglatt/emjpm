@@ -33,7 +33,7 @@ module.exports = {
       directory: join(__dirname, "migrations")
     },
     seeds: {
-      directory: join(__dirname, "seeds/development")
+      directory: join(__dirname, "seeds/production")
     }
   },
   production: {
