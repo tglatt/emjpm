@@ -1,20 +1,28 @@
-import React, { useState } from "react";
-import { useQuery } from "@apollo/react-hooks";
+import React, { useState, useContext } from "react";
+import { useQuery, useLazyQuery } from "@apollo/react-hooks";
 import { Box, Flex } from "rebass";
 import { Mandatairelist } from "@socialgouv/emjpm-ui-components";
 import { Button } from "@socialgouv/emjpm-ui-core";
 import { Scrollbar } from "react-scrollbars-custom";
+
+import { MapContext } from "../MagistratMandatairesMap/context";
 import { formatMandatairesList } from "../MandatairesList/utils";
 import { MagistratMapMandataireListStyle } from "./style";
-import { MESURES_GESTIONNAIRE } from "./queries";
+import { MESURES_SERVICE, MESURES_MANDATAIRE, MESURES_GESTIONNAIRE } from "./queries";
 
 const RESULT_PER_PAGE = 20;
 
 const MagistratMapMandataireList = props => {
   const { tiId } = props;
   const [currentPage, setCurrentPage] = useState(0);
+  const {
+    //setCenter,
+    setMesures
+    //setcurrentGestionnaire
+  } = useContext(MapContext);
 
-  // const [getMesures, { data: mesureData }] = useLazyQuery(MESURES_MANDATAIRE);
+  const [getServicesMesures, { data: servicesMesures }] = useLazyQuery(MESURES_SERVICE);
+  const [getMandatairesMesures, { data: mandatairesMesures }] = useLazyQuery(MESURES_MANDATAIRE);
 
   const { data, error, loading, fetchMore } = useQuery(
     MESURES_GESTIONNAIRE,
@@ -38,10 +46,21 @@ const MagistratMapMandataireList = props => {
     return <div>error</div>;
   }
 
+  if (servicesMesures) {
+    setMesures(servicesMesures.mesures);
+  }
+
+  if (mandatairesMesures) {
+    setMesures(mandatairesMesures.mesures);
+  }
+
   const chooseMandataire = data => {
-    console.log(data);
-    // setCenter(currentGestionnaire.coordinates);
-    // setMesures(data.mesures);
+    if (data.type === "service") {
+      getServicesMesures({ variables: { id: data.serviceId } });
+    }
+    if (data.type === "préposé" || data.type === "individuel") {
+      getMandatairesMesures({ variables: { id: data.mandataireId } });
+    }
   };
 
   const { count } = data.count.aggregate;
