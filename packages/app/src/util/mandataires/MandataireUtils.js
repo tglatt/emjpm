@@ -33,6 +33,8 @@ export const formatMandataire = (
   if (discriminator === "SERVICE") {
     const [headquarter] = service.service_antennes ? service.service_antennes : [];
     currentDiscriminator = {
+      latitude: service.latitude || null,
+      longitude: service.longitude || null,
       serviceId: service.id,
       antenneId: service.service_antennes ? headquarter.id : null,
       id: `${discriminator}-${service.id}`,
@@ -48,6 +50,8 @@ export const formatMandataire = (
     };
   } else {
     currentDiscriminator = {
+      latitude: mandataire.latitude || null,
+      longitude: mandataire.longitude || null,
       mandataireId: mandataire.id,
       id: `${discriminator}-${mandataire.id}`,
       email: mandataire.user && mandataire.user.email ? mandataire.user.email : "non renseigné",
