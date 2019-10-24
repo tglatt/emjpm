@@ -2,7 +2,7 @@ import React, { useState, useContext } from "react";
 import { useQuery, useLazyQuery } from "@apollo/react-hooks";
 import { Box, Flex } from "rebass";
 import { Mandatairelist } from "@socialgouv/emjpm-ui-components";
-import { Button } from "@socialgouv/emjpm-ui-core";
+import { Button, Spinner } from "@socialgouv/emjpm-ui-core";
 import { Scrollbar } from "react-scrollbars-custom";
 
 import { MapContext } from "../MagistratMandatairesMap/context";
@@ -20,22 +20,21 @@ const MagistratMandatairesMapList = props => {
   const [getServicesMesures, { data: servicesMesures }] = useLazyQuery(MESURES_SERVICE);
   const [getMandatairesMesures, { data: mandatairesMesures }] = useLazyQuery(MESURES_MANDATAIRE);
 
-  const { data, error, loading, fetchMore } = useQuery(
-    MESURES_GESTIONNAIRE,
-    {
-      variables: {
-        tiId: tiId,
-        offset: 0,
-        limit: RESULT_PER_PAGE
-      }
+  const { data, error, loading, fetchMore } = useQuery(MESURES_GESTIONNAIRE, {
+    variables: {
+      tiId: tiId,
+      offset: 0,
+      limit: RESULT_PER_PAGE
     },
-    {
-      fetchPolicy: "network-only"
-    }
-  );
+    fetchPolicy: "cache-and-network"
+  });
 
   if (loading) {
-    return <div>loading</div>;
+    return (
+      <Flex alignItem="center" justifyContent="center" width="100%" my="5">
+        <Spinner />
+      </Flex>
+    );
   }
 
   if (error) {

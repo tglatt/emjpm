@@ -13,7 +13,7 @@ export const MESURES_GESTIONNAIRE = gql`
       limit: $limit
       offset: $offset
       where: { gestionnaire_tis: { ti_id: { _eq: $tiId } } }
-      order_by: { remaining_capacity: $order }
+      order_by: { remaining_capacity: desc_nulls_last }
     ) {
       discriminator
       mesures_awaiting

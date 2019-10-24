@@ -66,7 +66,7 @@ const MagistratMesures = () => {
                       });
                     }}
                   >
-                    Afficher les mandataires suivants
+                    Afficher les mesures suivantes
                   </Button>
                 </Flex>
               )}

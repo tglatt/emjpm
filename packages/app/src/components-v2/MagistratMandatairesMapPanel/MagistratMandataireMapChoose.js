@@ -13,7 +13,14 @@ import { MandataireInformations } from "../MagistratMandatairesList/MandataireIn
 
 export const MagistratChoose = props => {
   const { ti, antenneId, mandataireId } = props;
-  const [chooseMandataire] = useMutation(CHOOSE_MANDATAIRE);
+  const [chooseMandataire] = useMutation(CHOOSE_MANDATAIRE, {
+    refetchQueries: ["view_mesure_gestionnaire", "view_mesure_gestionnaire_aggregate"],
+    onCompleted: () => {
+      setMesures([]);
+      setcurrentGestionnaire(false);
+      setCenter([2.3488, 48.8534]);
+    }
+  });
   const { setCenter, setMesures, setcurrentGestionnaire } = useContext(MapContext);
   return (
     <Flex flexWrap="wrap">
@@ -35,8 +42,7 @@ export const MagistratChoose = props => {
                 civilite: values.civilite.value,
                 annee: values.annee,
                 numero_rg: values.numero_rg
-              },
-              refetchQueries: ["view_mesure_gestionnaire"]
+              }
             });
             setSubmitting(false);
           }}
