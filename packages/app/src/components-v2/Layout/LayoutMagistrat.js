@@ -17,10 +17,6 @@ const navigationLinks = [
     url: "/magistrats"
   },
   {
-    title: "La carte des mandataires",
-    url: "/magistrats/map"
-  },
-  {
     title: "Vos mesures",
     url: "/magistrats/mesures"
   },

@@ -1,3 +1,5 @@
+
+
 exports.getConfiguration = env => ({
   sentryPublicDSN: env.SENTRY_PUBLIC_DSN,
   sentryEnvironment: process.env.SENTRY_ENV,
