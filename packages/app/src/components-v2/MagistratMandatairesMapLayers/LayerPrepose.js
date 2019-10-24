@@ -2,9 +2,9 @@ import React, { useContext } from "react";
 import { Layer, Feature } from "react-mapbox-gl";
 import { useLazyQuery } from "@apollo/react-hooks";
 
-import { MapContext } from "./context";
+import { MapContext } from "../MagistratMandatairesMap/context";
 import iconMarker from "../../../static/images/map-icon-propose-man@2x.png";
-import { MESURES_MANDATAIRE } from "./queries";
+import { MESURES_MANDATAIRE } from "../MagistratMandatairesMap/queries";
 
 const image = new Image(60, 72);
 image.src = iconMarker;
@@ -16,17 +16,17 @@ const LayerPrepose = props => {
     MapContext
   );
   const [getMesures, { data }] = useLazyQuery(MESURES_MANDATAIRE);
-
   let currentPreposes = prepose;
 
-  const chooseMandataire = prepose => {
+  const chooseMandataire = gestionnaire => {
+    setCenter([gestionnaire.mandataire.longitude, gestionnaire.mandataire.latitude]);
     // Should move that when data are fetched so it will be less laggy
     setcurrentGestionnaire({
-      id: prepose.mandataire.id,
+      id: gestionnaire.mandataire.id,
       discriminator: "MANDATAIRE_PRE",
-      coordinates: [prepose.mandataire.longitude, prepose.mandataire.latitude]
+      coordinates: [gestionnaire.mandataire.longitude, gestionnaire.mandataire.latitude]
     });
-    getMesures({ variables: { id: prepose.mandataire.id } });
+    getMesures({ variables: { id: gestionnaire.mandataire.id } });
   };
 
   if (currentGestionnaire) {
@@ -38,11 +38,8 @@ const LayerPrepose = props => {
     });
   }
 
-  if (data && data.mesures) {
-    setTimeout(function() {
-      setCenter(currentGestionnaire.coordinates);
-      setMesures(data.mesures);
-    }, 100);
+  if (data && data.mesures.length > 0 && currentGestionnaire.discriminator === "MANDATAIRE_PRE") {
+    setMesures(data.mesures);
   }
 
   return (

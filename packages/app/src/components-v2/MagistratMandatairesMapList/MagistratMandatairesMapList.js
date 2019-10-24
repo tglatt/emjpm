@@ -12,7 +12,7 @@ import { MESURES_SERVICE, MESURES_MANDATAIRE, MESURES_GESTIONNAIRE } from "./que
 
 const RESULT_PER_PAGE = 20;
 
-const MagistratMapMandataireList = props => {
+const MagistratMandatairesMapList = props => {
   const { tiId } = props;
   const [currentPage, setCurrentPage] = useState(0);
   const { setCenter, setMesures, setcurrentGestionnaire } = useContext(MapContext);
@@ -112,4 +112,4 @@ const MagistratMapMandataireList = props => {
   );
 };
 
-export { MagistratMapMandataireList };
+export { MagistratMandatairesMapList };

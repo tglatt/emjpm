@@ -1,10 +1,12 @@
 import React, { useContext } from "react";
 import ReactMapboxGl from "react-mapbox-gl";
 
-import LayerServices from "./LayerServices";
-import LayerIndividuel from "./LayerIndividuel";
-import LayerPrepose from "./LayerPrepose";
-import LayerMesures from "./LayerMesures";
+import {
+  LayerServices,
+  LayerIndividuel,
+  LayerPrepose,
+  LayerMesures
+} from "../MagistratMandatairesMapLayers";
 import { MapContext } from "./context";
 const Map = ReactMapboxGl({ accessToken: "" });
 
@@ -21,7 +23,6 @@ const MagistratMandatairesMap = props => {
   const prepose = view_mesure_gestionnaire.filter(
     gestionnaire => gestionnaire.discriminator === "MANDATAIRE_PRE"
   );
-
   return (
     <Map
       style="https://openmaptiles.geo.data.gouv.fr/styles/osm-bright/style.json"

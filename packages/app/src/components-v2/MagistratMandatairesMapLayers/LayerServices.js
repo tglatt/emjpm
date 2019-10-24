@@ -2,8 +2,8 @@ import React, { useContext } from "react";
 import { Layer, Feature } from "react-mapbox-gl";
 import { useLazyQuery } from "@apollo/react-hooks";
 
-import { MESURES_SERVICE } from "./queries";
-import { MapContext } from "./context";
+import { MESURES_SERVICE } from "../MagistratMandatairesMap/queries";
+import { MapContext } from "../MagistratMandatairesMap/context";
 import iconMarker from "../../../static/images/map-icon-service@2x.png";
 
 const image = new Image(60, 72);
@@ -18,14 +18,15 @@ const LayerServices = props => {
   const [getMesures, { data }] = useLazyQuery(MESURES_SERVICE);
   let currentServices = services;
 
-  const chooseMandataire = service => {
+  const chooseMandataire = gestionnaire => {
+    setCenter([gestionnaire.service.longitude, gestionnaire.service.latitude]);
     // Should move that when data are fetched so it will be less laggy
     setcurrentGestionnaire({
-      id: service.service.id,
+      id: gestionnaire.service.id,
       discriminator: "SERVICE",
-      coordinates: [service.service.longitude, service.service.latitude]
+      coordinates: [gestionnaire.service.longitude, gestionnaire.service.latitude]
     });
-    getMesures({ variables: { id: service.service.id } });
+    getMesures({ variables: { id: gestionnaire.service.id } });
   };
 
   if (currentGestionnaire) {
@@ -36,11 +37,8 @@ const LayerServices = props => {
     );
   }
 
-  if (data && data.mesures) {
-    setTimeout(function() {
-      setCenter(currentGestionnaire.coordinates);
-      setMesures(data.mesures);
-    }, 100);
+  if (data && data.mesures.length > 0 && currentGestionnaire.discriminator === "SERVICE") {
+    setMesures(data.mesures);
   }
 
   return (
