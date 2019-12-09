@@ -1,0 +1,151 @@
+#
+
+Install api:
+  extends: .prepare_stage
+  image: node:12-alpine
+  # rules:
+  #   - changes:
+  #       - packages/api/.gitlab-ci.yml
+  #       - packages/api/package.json
+  #       - yarn.lock
+  #     when: always
+  cache:
+    key: "$CI_COMMIT_REF_SLUG-api"
+    paths:
+      - YARN_CACHE_URL
+      - NODE_MODULES_CACHE_URL
+    policy: pull-push
+  before_script:
+    - apk add curl=~7
+    - find packages -maxdepth 1 -type d -not -name api -not -name knex | tail -n +2 | xargs rm -rf
+    - set -x
+    - >-
+
+      function checking_cache() {
+        local url="${1}"
+        echo "Downloading cache.tar.gz from ${url}"
+        time curl -s -o cache.tar.gz ${url}
+        echo "Extracting cache.tar.gz"
+        time tar xzf cache.tar.gz
+        echo "Successfully extracted cache"
+      }
+
+    - >-
+      if [[ -f YARN_CACHE_URL ]]; then
+        checking_cache $(cat YARN_CACHE_URL)
+      fi
+
+    - >-
+      if [[ -f NODE_MODULES_CACHE_URL ]]; then
+        checking_cache $(cat NODE_MODULES_CACHE_URL)
+      fi
+
+    - set +x
+  script:
+    - yarn config set cache-folder $CI_PROJECT_DIR/.yarn
+    - yarn --frozen-lockfile
+  after_script:
+    - set -x
+    - >-
+
+      function creating_cache() {
+        local folder="${1}"
+        if [[ ! -d ${folder} ]]; then
+          echo "No ${folder} to cache"
+          return
+        fi
+
+        local tmpfile=$( mktemp cache_XXX.tar.gz )
+
+        echo "Creating ${tmpfile} from ${folder}"
+        time tar czf ${tmpfile} ${folder}
+
+        # if [[ -f cache.tar.gz]] &&\
+        #   [[ diff cache.tar.gz ${tmpfile} ]] ; then
+        #   echo "No changes detected"
+        #   return
+        # fi
+
+        echo "Uploading ${tmpfile} to https://transfer.sh/${tmpfile}"
+        time curl --upload-file ./${tmpfile} https://transfer.sh/${tmpfile} > URL
+        echo "Successfully uploaded to $(cat URL)"
+      }
+
+      # creating_cache .yarn && mv URL YARN_CACHE_URL;
+    - creating_cache node_modules && mv URL NODE_MODULES_CACHE_URL;
+
+    - set +x
+  artifacts:
+    expire_in: 30 mins
+    paths:
+      - node_modules
+      - packages/api/node_modules
+
+#
+
+Lint @emjpm/api:
+  extends: .quality_stage
+  image: node:12-alpine
+  dependencies:
+    - Install api
+  needs:
+    - Install api
+  script:
+    - yarn workspace @emjpm/api lint
+
+Test @emjpm/api:
+  extends: .quality_stage
+  image: node:12-alpine
+  dependencies:
+    - Install api
+  needs:
+    - Install api
+  services:
+    - name: postgres:10-alpine
+  allow_failure: true
+  retry: 1
+  variables:
+    DATABASE_URL: psql://postgres:@localhost/emjpm
+    PGHOST: localhost
+    PGUSER: postgres
+    TZ: Europe/Paris
+  before_script:
+    - apk add --update --no-cache postgresql=~11
+    - psql --version
+    #
+    - pg_isready -h localhost
+  script:
+    - sh -x docker/postgres/postgres-init.sh
+    - yarn workspace @emjpm/api test
+
+#
+
+Build @emjpm/api:
+  extends: .quality_stage
+  dependencies:
+    - Install api
+  needs:
+    - Install api
+  image: node:12-alpine
+  script:
+    - yarn workspace @emjpm/api build
+  artifacts:
+    expire_in: 30 mins
+    paths:
+      - packages/api/dist
+
+#
+
+Register api image:
+  extends:
+    - .base_register_stage
+    - .register_stage
+  dependencies:
+    - Build @emjpm/api
+  needs:
+    - Build @emjpm/api
+  before_script:
+    - cp yarn.lock packages/api/yarn.lock
+  variables:
+    CONTEXT: packages/api
+    IMAGE_NAME: $CI_REGISTRY_IMAGE/api
